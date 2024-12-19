@@ -1,0 +1,73 @@
+{# <!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+      #messages { list-style-type: none; margin: 0; padding: 0; max-height: 300px; overflow-y: auto; }
+      #messages li { padding: 5px 10px; }
+      #form { display: flex; margin-top: 20px; }
+      #input { flex: 1; padding: 10px; }
+      #send { padding: 10px; }
+      .notification { color: gray; font-style: italic; }
+      .typing { color: blue; font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <h1>Chat Application</h1>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="username" placeholder="Enter your username" required />
+      <input id="input" placeholder="Enter your message..." autocomplete="off" />
+      <button id="send">Send</button>
+    </form>
+    <p id="typing" class="typing"></p>
+
+    <script>
+      const socket = io();
+
+      // DOM Elements
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+      const usernameInput = document.getElementById("username");
+      const typingIndicator = document.getElementById("typing");
+
+      // Handle new chat messages
+      socket.on("chat message", (msg) => {
+        const item = document.createElement("li");
+        item.textContent = `${msg.username}: ${msg.message}`;
+        messages.appendChild(item);
+        typingIndicator.textContent = ""; // Clear typing indicator
+      });
+
+      // Handle notifications
+      socket.on("notification", (msg) => {
+        const item = document.createElement("li");
+        item.textContent = msg;
+        item.className = "notification";
+        messages.appendChild(item);
+      });
+
+      // Handle typing indicator
+      socket.on("typing", (msg) => {
+        typingIndicator.textContent = msg;
+      });
+
+      // Form submission
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value && usernameInput.value) {
+          socket.emit("chat message", { username: usernameInput.value, message: input.value });
+          input.value = "";
+        }
+      });
+
+      // Typing event
+      input.addEventListener("keyup", () => {
+        socket.emit("typing", usernameInput.value);
+      });
+    </script>
+  </body>
+</html> #}
